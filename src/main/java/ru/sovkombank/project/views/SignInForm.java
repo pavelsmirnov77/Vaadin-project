@@ -8,6 +8,8 @@ import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinSession;
+import ru.sovkombank.project.entities.User;
 import ru.sovkombank.project.services.UserService;
 
 @Route("/api/signin")
@@ -29,7 +31,11 @@ public class SignInForm extends VerticalLayout {
             if (userService.signIn(userEmail, userPassword)) {
                 Notification.show("Вы успешно вошли!");
 
+                User currentUser = userService.getCurrentUser(userEmail);
+                Long userId = currentUser.getId();
+                VaadinSession.getCurrent().setAttribute("userId", userId);
                 getUI().ifPresent(ui -> ui.navigate(ProductList.class));
+
             } else {
                 Notification.show("Неверный email или пароль. Попробуйте снова.");
             }

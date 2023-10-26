@@ -10,7 +10,9 @@ import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import ru.sovkombank.project.entities.Product;
+import ru.sovkombank.project.services.CartService;
 import ru.sovkombank.project.services.ProductService;
+import ru.sovkombank.project.services.UserService;
 
 @Route("")
 @PageTitle("Магазин электроники")
@@ -18,8 +20,11 @@ public class ProductList extends VerticalLayout {
     private final ProductService productService;
     private final Grid<Product> productGrid;
 
-    public ProductList(ProductService productService) {
+    public ProductList(ProductService productService, CartService cartService, UserService userService) {
         this.productService = productService;
+
+        Header header = new Header(userService);
+        add(header);
 
         productGrid = new Grid<>(Product.class);
         productGrid.setColumns("name", "price", "quantity");
@@ -27,7 +32,7 @@ public class ProductList extends VerticalLayout {
         productGrid.addColumn(new ComponentRenderer<>(product -> {
             Button addToCartButton = new Button("Добавить в корзину");
             addToCartButton.addClickListener(e -> {
-
+                cartService.addToCart(userService.getCurrentUser().getId(), product.getId());
             });
             return addToCartButton;
         }));

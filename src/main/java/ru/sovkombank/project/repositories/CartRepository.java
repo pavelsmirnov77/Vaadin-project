@@ -4,7 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import ru.sovkombank.project.entities.Cart;
 
-import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CartRepository extends JpaRepository<Cart, Long> {
@@ -14,13 +14,12 @@ public interface CartRepository extends JpaRepository<Cart, Long> {
      * @param userId Уникальный идентификатор пользователя
      * @return Возвращает найденную корзину
      */
-    List<Cart> findCartByUser_Id(Long userId);
+    Optional<Cart> findCartByUser_Id(Long userId);
 
     /**
-     * Подсчитывает количество корзин, в которых есть определенных товар
+     * Удаляет из БД все записи о корзине пользователя
      *
-     * @param productId Уникальный идентификатор товара
-     * @return Возвращает количество корзин
+     * @param userId Уникальный идентификатор пользователя
      */
-    Integer countCartsByProducts_Id(long productId);
+    void deleteAllByUser_Id(long userId);
 }

@@ -1,8 +1,8 @@
 package ru.sovkombank.project.services;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.sovkombank.project.entities.Product;
-import ru.sovkombank.project.exceptions.ProductException;
 import ru.sovkombank.project.repositories.CartRepository;
 import ru.sovkombank.project.repositories.ProductRepository;
 
@@ -12,11 +12,10 @@ import java.util.Optional;
 @Service
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
-    private final CartRepository cartRepository;
 
+    @Autowired
     public ProductServiceImpl(ProductRepository productRepository, CartRepository cartRepository) {
         this.productRepository = productRepository;
-        this.cartRepository = cartRepository;
     }
 
     @Override
@@ -43,12 +42,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void deleteProductById(Long productId) {
         if (productRepository.existsById(productId)) {
-            if (cartRepository.countCartsByProducts_Id(productId) == 0) {
-                productRepository.deleteById(productId);
-                return;
-            }
-            throw new ProductException("Товара не существует");
+            productRepository.deleteById(productId);
         }
-
     }
 }
