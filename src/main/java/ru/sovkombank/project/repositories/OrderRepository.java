@@ -9,5 +9,11 @@ import java.util.List;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
+    /**
+     * Получает список заказов по пользователю
+     *
+     * @param user пользователь
+     * @return список заказов
+     */
     List<OrderRepository> findOrderByUser(User user);
 }

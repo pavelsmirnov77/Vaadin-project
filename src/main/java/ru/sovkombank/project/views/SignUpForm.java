@@ -41,6 +41,8 @@ public class SignUpForm extends VerticalLayout {
             if (binder.writeBeanIfValid(new User())) {
                 User user = new User(username.getValue(), email.getValue(), password.getValue());
                 userService.signUp(user);
+
+                getUI().ifPresent(ui -> ui.navigate(SignInForm.class));
             }
         });
 
