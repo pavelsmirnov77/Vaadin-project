@@ -53,10 +53,8 @@ public class CartServiceImpl implements CartService {
                     newCartProduct.setQuantity(1);
                     cartProductRepository.save(newCartProduct);
                 }
-
             }
         }
-
     }
 
     @Override
