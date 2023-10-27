@@ -58,7 +58,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getCurrentUser(String email) {
-        return null;
+        Optional<User> user = userRepository.findUserByEmail(email);
+        return user.orElse(null);
     }
 
     @Override
@@ -81,10 +82,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void updateUser(User user) {
+        userRepository.save(user);
+    }
+
+    @Override
     public void logout() {
         VaadinSession session = VaadinSession.getCurrent();
         String email = (String) session.getAttribute("userEmail");
         loggedInUsers.remove(email);
         session.setAttribute("userEmail", null);
+    }
+
+    @Override
+    public void deleteUserById(Long userId) {
+        userRepository.deleteById(userId);
     }
 }

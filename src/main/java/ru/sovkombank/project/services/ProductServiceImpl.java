@@ -3,7 +3,6 @@ package ru.sovkombank.project.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.sovkombank.project.entities.Product;
-import ru.sovkombank.project.repositories.CartRepository;
 import ru.sovkombank.project.repositories.ProductRepository;
 
 import java.util.List;
@@ -14,7 +13,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
 
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository, CartRepository cartRepository) {
+    public ProductServiceImpl(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
 
@@ -34,9 +33,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public boolean update(Product product) {
+    public void updateProduct(Product product) {
         productRepository.save(product);
-        return true;
     }
 
     @Override

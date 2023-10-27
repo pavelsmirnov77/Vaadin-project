@@ -1,7 +1,9 @@
-package ru.sovkombank.project.views;
+package ru.sovkombank.project.views.registration;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.PasswordField;
@@ -11,28 +13,44 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import ru.sovkombank.project.entities.User;
 import ru.sovkombank.project.services.UserService;
+import ru.sovkombank.project.views.MainLayout;
+import ru.sovkombank.project.views.authorization.SignInView;
 
-@Route("/api/signup")
-@PageTitle("Регистрация пользователя")
-public class SignUpForm extends VerticalLayout {
-    public SignUpForm(UserService userService) {
+@Route(value = "api/signup", layout = MainLayout.class)
+@PageTitle("Регистрация")
+public class SignUpView extends VerticalLayout {
+    public SignUpView(UserService userService) {
+
+        FlexLayout container = new FlexLayout();
+        container.setSizeFull();
+        container.setJustifyContentMode(JustifyContentMode.CENTER);
+        container.setAlignItems(Alignment.CENTER);
+
         FormLayout form = new FormLayout();
+
+        H1 label = new H1("Регистрация");
+        label.getStyle().set("text-align", "center");
+
         TextField username = new TextField("Имя пользователя");
         EmailField email = new EmailField("Email");
         PasswordField password = new PasswordField("Пароль");
-        Button registerButton = new Button("Зарегистрировать");
-        form.add(username, email, password, registerButton);
+        Button registerButton = new Button("Зарегистрироваться");
+
+        form.setMaxWidth("300px");
+        username.setWidthFull();
+        email.setWidthFull();
+        password.setWidthFull();
+        registerButton.setWidthFull();
+
+        form.add(label, username, email, password, registerButton);
 
         Binder<User> binder = new Binder<>(User.class);
-
         binder.forField(username)
                 .asRequired("Имя пользователя не может быть пустым")
                 .bind(User::getUsername, User::setUsername);
-
         binder.forField(email)
                 .asRequired("Email не может быть пустым")
                 .bind(User::getEmail, User::setEmail);
-
         binder.forField(password)
                 .asRequired("Пароль не может быть пустым")
                 .bind(User::getPassword, User::setPassword);
@@ -41,11 +59,11 @@ public class SignUpForm extends VerticalLayout {
             if (binder.writeBeanIfValid(new User())) {
                 User user = new User(username.getValue(), email.getValue(), password.getValue());
                 userService.signUp(user);
-
-                getUI().ifPresent(ui -> ui.navigate(SignInForm.class));
+                getUI().ifPresent(ui -> ui.navigate(SignInView.class));
             }
         });
 
-        add(form);
+        container.add(form);
+        add(container);
     }
 }

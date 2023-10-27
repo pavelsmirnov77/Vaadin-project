@@ -1,4 +1,4 @@
-package ru.sovkombank.project.views;
+package ru.sovkombank.project.views.product;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -13,55 +13,64 @@ import ru.sovkombank.project.entities.Product;
 import ru.sovkombank.project.services.CartService;
 import ru.sovkombank.project.services.ProductService;
 import ru.sovkombank.project.services.UserService;
+import ru.sovkombank.project.views.MainLayout;
 
-@Route("")
-@PageTitle("Магазин электроники")
-public class ProductList extends VerticalLayout {
+import java.math.BigDecimal;
+
+@Route(value = "", layout = MainLayout.class)
+@PageTitle("Список товаров")
+public class ProductView extends VerticalLayout {
     private final ProductService productService;
     private final Grid<Product> productGrid;
 
-    public ProductList(ProductService productService, CartService cartService, UserService userService) {
+    public ProductView(ProductService productService, CartService cartService, UserService userService) {
         this.productService = productService;
-
-        Header header = new Header(userService);
-        add(header);
 
         productGrid = new Grid<>(Product.class);
         productGrid.setColumns("name", "price", "quantity");
 
-        productGrid.addColumn(new ComponentRenderer<>(product -> {
-            Button addToCartButton = new Button("Добавить в корзину");
-            addToCartButton.addClickListener(e -> {
-                cartService.addToCart(userService.getCurrentUser().getId(), product.getId());
-            });
-            return addToCartButton;
-        }));
+        productGrid.getColumnByKey("name").setHeader("Товар");
+        productGrid.getColumnByKey("price").setHeader("Цена");
+        productGrid.getColumnByKey("quantity").setHeader("Количество");
 
-        productGrid.addColumn(new ComponentRenderer<>(product -> {
-            Button deleteButton = new Button("Удалить");
-            deleteButton.addClickListener(e -> {
-                productService.deleteProductById(product.getId());
-                refreshGrid();
-            });
-            return deleteButton;
-        }));
+        if (userService.getCurrentUser() != null) {
+            productGrid.addColumn(new ComponentRenderer<>(product -> {
+                Button addToCartButton = new Button("Добавить в корзину");
+                addToCartButton.addClickListener(e -> {
+                    cartService.addToCart(userService.getCurrentUser().getId(), product.getId());
+                });
+                return addToCartButton;
+            }));
 
-        productGrid.addColumn(new ComponentRenderer<>(product -> {
-            Button editButton = new Button("Редактировать");
-            editButton.addClickListener(e -> {
-                showEditProductDialog(product);
-            });
-            return editButton;
-        }));
+            productGrid.addColumn(new ComponentRenderer<>(product -> {
+                Button deleteButton = new Button("Удалить");
+                deleteButton.getStyle().set("color", "red");
+                deleteButton.addClickListener(e -> {
+                    productService.deleteProductById(product.getId());
+                    refreshGrid();
+                });
+                return deleteButton;
+            }));
 
-        FormLayout formLayout = new FormLayout();
-        Button addProductButton = new Button("Добавить новый товар");
-        addProductButton.addClickListener(e -> {
-            showAddProductDialog();
-        });
-        formLayout.add(addProductButton);
+            productGrid.addColumn(new ComponentRenderer<>(product -> {
+                Button editButton = new Button("Редактировать");
+                editButton.addClickListener(e -> {
+                    showEditProductDialog(product);
+                });
+                return editButton;
+            }));
 
-        add(formLayout, productGrid);
+            Button addProductButton = new Button("Добавить новый товар");
+            addProductButton.getStyle().set("color", "green");
+            addProductButton.addClickListener(e -> showAddProductDialog());
+
+            add(productGrid);
+
+            add(addProductButton);
+        }
+        else {
+            add(productGrid);
+        }
 
         refreshGrid();
     }
@@ -83,7 +92,7 @@ public class ProductList extends VerticalLayout {
         saveButton.addClickListener(e -> {
             Product product = new Product();
             product.setName(nameField.getValue());
-            product.setPrice(Double.parseDouble(priceField.getValue()));
+            product.setPrice(new BigDecimal(priceField.getValue()));
             product.setQuantity(Integer.parseInt(quantityField.getValue()));
             productService.addNewProduct(product);
             refreshGrid();
@@ -114,9 +123,9 @@ public class ProductList extends VerticalLayout {
         Button saveButton = new Button("Сохранить");
         saveButton.addClickListener(e -> {
             product.setName(nameField.getValue());
-            product.setPrice(Double.parseDouble(priceField.getValue()));
+            product.setPrice(new BigDecimal(priceField.getValue()));
             product.setQuantity(Integer.parseInt(quantityField.getValue()));
-            productService.update(product);
+            productService.updateProduct(product);
             refreshGrid();
             dialog.close();
         });

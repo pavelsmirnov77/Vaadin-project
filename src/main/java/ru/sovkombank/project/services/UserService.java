@@ -39,8 +39,12 @@ public interface UserService {
      */
     User getCurrentUser();
 
+    void updateUser(User user);
+
     /**
      * выходит из аккаунта
      */
     void logout();
+
+    void deleteUserById(Long userId);
 }

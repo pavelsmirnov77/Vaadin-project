@@ -30,9 +30,8 @@ public interface ProductService {
      * Изменяет товар
      *
      * @param product Обновленный товар
-     * @return Возвращает статус обновления товара
      */
-    boolean update(Product product);
+    void updateProduct(Product product);
 
     /**
      * Удаляет товар по идентификатору
