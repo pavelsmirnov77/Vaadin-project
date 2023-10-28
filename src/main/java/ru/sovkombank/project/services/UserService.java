@@ -39,6 +39,11 @@ public interface UserService {
      */
     User getCurrentUser();
 
+    /**
+     * Обновляет информацию о пользователе
+     *
+     * @param user пользователь
+     */
     void updateUser(User user);
 
     /**

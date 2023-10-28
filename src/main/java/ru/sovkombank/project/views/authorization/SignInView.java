@@ -1,5 +1,6 @@
 package ru.sovkombank.project.views.authorization;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.H1;
@@ -52,6 +53,7 @@ public class SignInView extends VerticalLayout {
                 Long userId = currentUser.getId();
                 VaadinSession.getCurrent().setAttribute("userId", userId);
                 getUI().ifPresent(ui -> ui.navigate(ProductView.class));
+                UI.getCurrent().getPage().reload();
             } else {
                 Notification.show("Неверная электронная почта или пароль. Попробуйте снова.");
             }

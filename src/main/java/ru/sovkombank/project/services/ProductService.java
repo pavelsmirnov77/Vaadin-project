@@ -1,5 +1,6 @@
 package ru.sovkombank.project.services;
 
+import ru.sovkombank.project.entities.Category;
 import ru.sovkombank.project.entities.Product;
 
 import java.util.List;
@@ -11,7 +12,7 @@ public interface ProductService {
      *
      * @param product Новый товар
      */
-    void addNewProduct(Product product);
+    void addNewProduct(Product product, Category category);
 
     /**
      * Ищет товар по его идентификатору
@@ -39,4 +40,7 @@ public interface ProductService {
      * @param productId Уникальный идентификатор товара
      */
     void deleteProductById(Long productId);
+
+    List<Product> getProductsByCategory(Category category);
+
 }

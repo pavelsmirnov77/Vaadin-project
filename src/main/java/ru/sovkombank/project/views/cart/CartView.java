@@ -37,6 +37,11 @@ public class CartView extends VerticalLayout {
 
         if (userId != null) {
             cartGrid.setColumns("name", "price", "quantity");
+
+            cartGrid.getColumnByKey("name").setHeader("Товар");
+            cartGrid.getColumnByKey("price").setHeader("Цена");
+            cartGrid.getColumnByKey("quantity").setHeader("Количество");
+
             cartGrid.addColumn(new ComponentRenderer<>(product -> {
                 Button deleteButton = new Button("Удалить");
                 deleteButton.addClickListener(e -> {
@@ -81,14 +86,23 @@ public class CartView extends VerticalLayout {
 
     private void createOrderAndShowConfirmationDialog(User user) {
         List<Product> productsInCart = cartService.getListOfProductsInCart(userId);
-        Order order = orderService.createOrder(user, productsInCart);
-        cartService.clearCart();
 
-        Dialog confirmationDialog = new Dialog();
-        confirmationDialog.add("Заказ успешно оформлен. Номер заказа: " + order.getId());
-        confirmationDialog.open();
+        if (productsInCart.isEmpty()) {
+            Dialog errorDialog = new Dialog();
+            errorDialog.add("Ваша корзина пуста. Добавьте товары перед оформлением заказа.");
+            errorDialog.open();
+        } else {
+            Order order = orderService.createOrder(user, productsInCart);
+            cartService.clearCart();
+
+            Dialog confirmationDialog = new Dialog();
+            confirmationDialog.add("Заказ успешно оформлен. Номер заказа: " + order.getId());
+            confirmationDialog.open();
+        }
+
         refreshGrid();
     }
+
 
     private void showQuantityChangeDialog(Product product) {
         Dialog dialog = new Dialog();

@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
+import java.util.List;
 
 @Data
 @Entity
@@ -17,11 +17,6 @@ public class Category {
     private Long id;
     private String name;
 
-    @ManyToMany
-    @JoinTable(
-            name = "product_categories",
-            joinColumns = @JoinColumn(name = "category_id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id")
-    )
-    private Set<Product> products;
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    private List<Product> products;
 }

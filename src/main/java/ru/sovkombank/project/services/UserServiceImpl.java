@@ -2,6 +2,7 @@ package ru.sovkombank.project.services;
 
 import com.vaadin.flow.server.VaadinSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.sovkombank.project.entities.Cart;
 import ru.sovkombank.project.entities.User;
@@ -20,10 +21,13 @@ public class UserServiceImpl implements UserService {
 
     private final Map<String, User> loggedInUsers = new HashMap<>();
 
+    private final PasswordEncoder passwordEncoder;
+
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, CartRepository cartRepository) {
+    public UserServiceImpl(UserRepository userRepository, CartRepository cartRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.cartRepository = cartRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -36,6 +40,9 @@ public class UserServiceImpl implements UserService {
             throw new UserException("Пользователь с таким email уже существует");
         }
 
+        // Хешируем пароль перед сохранением
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
         userRepository.save(user);
         cartRepository.save(cart);
     }
@@ -46,15 +53,17 @@ public class UserServiceImpl implements UserService {
 
         if (user.isPresent()) {
             User authenticatedUser = user.get();
-            loggedInUsers.put(email, authenticatedUser);
-            VaadinSession session = VaadinSession.getCurrent();
-            session.setAttribute("userEmail", email);
-
-            return true;
-        } else {
-            return false;
+            if (passwordEncoder.matches(password, authenticatedUser.getPassword())) {
+                loggedInUsers.put(email, authenticatedUser);
+                VaadinSession session = VaadinSession.getCurrent();
+                session.setAttribute("userEmail", email);
+                return true;
+            }
         }
+
+        return false;
     }
+
 
     @Override
     public User getCurrentUser(String email) {

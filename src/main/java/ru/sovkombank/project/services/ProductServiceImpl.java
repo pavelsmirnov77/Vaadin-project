@@ -2,6 +2,7 @@ package ru.sovkombank.project.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.sovkombank.project.entities.Category;
 import ru.sovkombank.project.entities.Product;
 import ru.sovkombank.project.repositories.ProductRepository;
 
@@ -18,7 +19,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void addNewProduct(Product product) {
+    public void addNewProduct(Product product, Category category) {
         productRepository.save(product);
     }
 
@@ -42,5 +43,10 @@ public class ProductServiceImpl implements ProductService {
         if (productRepository.existsById(productId)) {
             productRepository.deleteById(productId);
         }
+    }
+
+    @Override
+    public List<Product> getProductsByCategory(Category category) {
+        return productRepository.getAllByCategory(category);
     }
 }

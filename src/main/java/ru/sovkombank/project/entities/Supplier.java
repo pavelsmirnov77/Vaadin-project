@@ -17,6 +17,6 @@ public class Supplier {
     private Long id;
     private String name;
 
-    @OneToMany(mappedBy = "supplier")
+    @ManyToMany(mappedBy = "suppliers")
     private List<Product> products;
 }

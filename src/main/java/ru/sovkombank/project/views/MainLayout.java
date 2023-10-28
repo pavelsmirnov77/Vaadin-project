@@ -12,9 +12,9 @@ import com.vaadin.flow.theme.lumo.LumoUtility;
 import org.vaadin.lineawesome.LineAwesomeIcon;
 import ru.sovkombank.project.services.UserService;
 import ru.sovkombank.project.views.cart.CartView;
+import ru.sovkombank.project.views.category.CategoryView;
 import ru.sovkombank.project.views.header.HeaderView;
 import ru.sovkombank.project.views.order.OrderView;
-import ru.sovkombank.project.views.product.ProductView;
 import ru.sovkombank.project.views.user.UserInfoView;
 
 public class MainLayout extends AppLayout {
@@ -49,7 +49,7 @@ public class MainLayout extends AppLayout {
     private SideNav createNavigation() {
         SideNav nav = new SideNav();
         nav.addItem(new SideNavItem("Профиль", UserInfoView.class, LineAwesomeIcon.USER.create()));
-        nav.addItem(new SideNavItem("Список товаров", ProductView.class, LineAwesomeIcon.PRODUCT_HUNT.create()));
+        nav.addItem(new SideNavItem("Список товаров", CategoryView.class, LineAwesomeIcon.PRODUCT_HUNT.create()));
         nav.addItem(new SideNavItem("Корзина", CartView.class, LineAwesomeIcon.CART_PLUS_SOLID.create()));
         nav.addItem(
                 new SideNavItem("Заказы", OrderView.class, LineAwesomeIcon.MONEY_BILL_SOLID.create()));

@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 @Entity
@@ -19,7 +20,18 @@ public class Product {
     private BigDecimal price;
     private Integer quantity;
 
+    @OneToMany(mappedBy = "product",cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<CartProduct> cartProduct;
+
     @ManyToOne
-    @JoinColumn(name = "supplier_id")
-    private Supplier supplier;
+    @JoinColumn(name = "category_id")
+    private Category category;
+
+    @ManyToMany
+    @JoinTable(
+            name = "product_supplier",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "supplier_id")
+    )
+    private List<Supplier> suppliers;
 }
