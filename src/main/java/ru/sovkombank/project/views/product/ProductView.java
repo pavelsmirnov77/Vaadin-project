@@ -22,14 +22,13 @@ import java.util.List;
 @Route(layout = MainLayout.class)
 public class ProductView extends VerticalLayout {
     private final ProductService productService;
-    private final Category category;
+    private Category selectedCategory;
     private final UserService userService;
     private final CartService cartService;
     private final Grid<Product> productGrid;
 
-    public ProductView(ProductService productService, Category category, UserService userService, CartService cartService) {
+    public ProductView(ProductService productService, UserService userService, CartService cartService) {
         this.productService = productService;
-        this.category = category;
         this.userService = userService;
         this.cartService = cartService;
 
@@ -40,14 +39,10 @@ public class ProductView extends VerticalLayout {
 
         addProductButton.addClickListener(e -> showAddProductDialog());
 
-        Grid<Product> productGrid = new Grid<>(Product.class);
         productGrid.setColumns("name", "price", "quantity");
         productGrid.getColumnByKey("name").setHeader("Товар");
         productGrid.getColumnByKey("price").setHeader("Цена");
         productGrid.getColumnByKey("quantity").setHeader("Количество");
-
-        List<Product> productsInCategory = productService.getProductsByCategory(category);
-        productGrid.setItems(productsInCategory);
 
         if (this.userService.getCurrentUser() != null) {
             productGrid.addColumn(new ComponentRenderer<>(product -> {
@@ -77,14 +72,20 @@ public class ProductView extends VerticalLayout {
                 });
                 return editButton;
             }));
+            add(addProductButton);
         }
 
-        add(addProductButton, productGrid);
+        add(productGrid);
         refreshGrid();
     }
 
     private void refreshGrid() {
-        productGrid.setItems(productService.getAllProducts());
+        if (selectedCategory != null) {
+            List<Product> productsInCategory = productService.getProductsByCategory(selectedCategory);
+            productGrid.setItems(productsInCategory);
+        } else {
+            productGrid.setItems(productService.getAllProducts());
+        }
     }
 
     private void showAddProductDialog() {
@@ -102,8 +103,8 @@ public class ProductView extends VerticalLayout {
             product.setName(nameField.getValue());
             product.setPrice(new BigDecimal(priceField.getValue()));
             product.setQuantity(Integer.parseInt(quantityField.getValue()));
-            product.setCategory(category);
-            productService.addNewProduct(product, category);
+            product.setCategory(selectedCategory);
+            productService.addNewProduct(product, selectedCategory);
             refreshGrid();
             UI.getCurrent().getPage().reload();
             dialog.close();
@@ -115,6 +116,11 @@ public class ProductView extends VerticalLayout {
         formLayout.add(nameField, priceField, quantityField);
         dialog.add(formLayout, saveButton, cancelButton);
         dialog.open();
+        refreshGrid();
+    }
+
+    public void setCategory(Category category) {
+        this.selectedCategory = category;
         refreshGrid();
     }
 

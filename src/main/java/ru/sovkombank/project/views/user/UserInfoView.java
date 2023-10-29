@@ -6,7 +6,6 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -29,18 +28,23 @@ public class UserInfoView extends VerticalLayout {
         this.userService = userService;
         this.currentUser = userService.getCurrentUser();
 
+        setAlignItems(Alignment.CENTER);
+        setJustifyContentMode(JustifyContentMode.CENTER);
+        setPadding(true);
+
         if (currentUser != null) {
             H1 pageTitle = new H1("Информация о пользователе");
             add(pageTitle);
 
-            FormLayout userInfoLayout = new FormLayout();
-            H3 nameLabel = new H3("Имя: " + currentUser.getUsername());
-            H3 emailLabel = new H3("Email: " + currentUser.getEmail());
+            VerticalLayout userInfoLayout = new VerticalLayout();
+            H2 nameLabel = new H2("Имя: " + currentUser.getUsername());
+            H2 emailLabel = new H2("Email: " + currentUser.getEmail());
             userInfoLayout.add(nameLabel, emailLabel);
             add(userInfoLayout);
 
             Button updateButton = new Button("Обновить");
             Button deleteButton = new Button("Удалить аккаунт");
+            deleteButton.getStyle().set("color", "red");
             Button logoutButton = new Button("Выйти");
 
             updateButton.addClickListener(e -> showUpdateUserDialog());
@@ -51,7 +55,8 @@ public class UserInfoView extends VerticalLayout {
             buttonsLayout.setSpacing(true);
             add(buttonsLayout);
         } else {
-            add(new H2("Вы не вошли в аккаунт. Авторизируйтесь или зарегистрируйтесь."));
+            H1 message = new H1("Вы не вошли в аккаунт. Авторизируйтесь или зарегистрируйтесь.");
+            add(message);
         }
     }
 

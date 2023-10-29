@@ -33,11 +33,16 @@ public class CategoryView extends VerticalLayout {
         this.cartService = cartService;
         this.userService = userService;
 
-        Button createCategoryButton = new Button("Создать категорию");
-        createCategoryButton.getStyle().set("color", "green");
-        createCategoryButton.addClickListener(e -> showCreateCategoryDialog());
+        if (userService.getCurrentUser() != null) {
+            Button createCategoryButton = new Button("Создать категорию");
+            createCategoryButton.getStyle().set("color", "green");
+            createCategoryButton.addClickListener(e -> showCreateCategoryDialog());
+            add(createCategoryButton);
+        } else if (categoryService.getAllCategories().isEmpty()) {
+            H2 noCategoriesMessage = new H2("Категорий нет. Авторизуйтесь, чтобы их создать.");
+            add(noCategoriesMessage);
+        }
 
-        add(createCategoryButton);
         refreshGrid();
     }
 
@@ -51,8 +56,8 @@ public class CategoryView extends VerticalLayout {
             category.setName(categoryNameField.getValue());
             categoryService.createCategory(category);
             dialog.close();
-            UI.getCurrent().getPage().reload();
             refreshGrid();
+            UI.getCurrent().getPage().reload();
         });
 
         dialog.add(categoryNameField, saveButton);
@@ -68,7 +73,8 @@ public class CategoryView extends VerticalLayout {
 
             categoryLayout.add(new HorizontalLayout(new H2("Категория: " + category.getName()), createButtonsForCategory(category)));
 
-            ProductView productView = new ProductView(productService, category, userService, cartService);
+            ProductView productView = new ProductView(productService, userService, cartService);
+            productView.setCategory(category);
             categoryLayout.add(productView);
 
             add(categoryLayout);
@@ -76,20 +82,24 @@ public class CategoryView extends VerticalLayout {
     }
 
     private HorizontalLayout createButtonsForCategory(Category category) {
-        Button editCategoryButton = new Button("Редактировать");
-        editCategoryButton.addClickListener(e -> {
-            showEditCategoryDialog(category);
-        });
+        if (userService.getCurrentUser() != null) {
+            Button editCategoryButton = new Button("Редактировать");
+            editCategoryButton.addClickListener(e -> {
+                showEditCategoryDialog(category);
+            });
 
-        Button deleteCategoryButton = new Button("Удалить");
-        deleteCategoryButton.getStyle().set("color", "red");
+            Button deleteCategoryButton = new Button("Удалить");
+            deleteCategoryButton.getStyle().set("color", "red");
 
-        deleteCategoryButton.addClickListener(e -> {
-            deleteCategory(category);
-            UI.getCurrent().getPage().reload();
-        });
+            deleteCategoryButton.addClickListener(e -> {
+                deleteCategory(category);
+                UI.getCurrent().getPage().reload();
+            });
 
-        return new HorizontalLayout(editCategoryButton, deleteCategoryButton);
+            return new HorizontalLayout(editCategoryButton, deleteCategoryButton);
+        }
+
+        return new HorizontalLayout();
     }
 
     private void showEditCategoryDialog(Category category) {

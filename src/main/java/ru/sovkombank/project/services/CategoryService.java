@@ -30,4 +30,6 @@ public interface CategoryService {
      * @param categoryId уникальный идентификатор категории
      */
     void deleteCategory(Long categoryId);
+
+    void deleteAllCategory();
 }
