@@ -56,9 +56,9 @@
 * Обновление имени поставщика;
 * Удаление поставщика.
 ### Конфигурация запуска:
-port: 8080;
-schema: vaadin_schema;
-username: postgres;
-password: postgres.
+* port: 8080;
+* schema: vaadin_schema;
+* username: postgres;
+* password: postgres.
 
 #### В файле schema есть SQL-запросы для заполнения БД базовой информацией.
