@@ -51,5 +51,10 @@ public interface UserService {
      */
     void logout();
 
+    /**
+     * Удаляет пользователя по его id
+     *
+     * @param userId уникальный идентификатор пользователя
+     */
     void deleteUserById(Long userId);
 }

@@ -34,39 +34,70 @@ public class UserInfoView extends VerticalLayout {
         setPadding(true);
 
         if (currentUser != null) {
-            H1 pageTitle = new H1("Информация о пользователе");
-            add(pageTitle);
-
-            VerticalLayout userInfoLayout = new VerticalLayout();
-            H2 nameLabel = new H2("Имя: " + currentUser.getUsername());
-            H2 emailLabel = new H2("Email: " + currentUser.getEmail());
-            userInfoLayout.add(nameLabel, emailLabel);
-            add(userInfoLayout);
-
-            Button updateButton = new Button("Обновить");
-            Button deleteButton = new Button("Удалить аккаунт");
-            deleteButton.getStyle().set("color", "red");
-            Button logoutButton = new Button("Выйти");
-
-            updateButton.addClickListener(e -> showUpdateUserDialog());
-            deleteButton.addClickListener(e -> deleteUserAccount());
-            logoutButton.addClickListener(e -> logoutUser());
-
-            HorizontalLayout buttonsLayout = new HorizontalLayout(updateButton, deleteButton, logoutButton);
-            buttonsLayout.setSpacing(true);
-            add(buttonsLayout);
+            createUserInfo();
         } else {
-            add(new H1("Вы не вошли в аккаунт. Авторизируйтесь или зарегистрируйтесь."));
-            Button loginButton = new Button("Авторизация");
-            loginButton.addClickListener(e -> UI.getCurrent().navigate(SignInView.class));
-
-            Button registerButton = new Button("Регистрация");
-            registerButton.addClickListener(e -> UI.getCurrent().navigate(SignUpView.class));
-
-            HorizontalLayout buttonsLayout = new HorizontalLayout(loginButton, registerButton);
-            buttonsLayout.setSpacing(true);
-            add(buttonsLayout);
+            displayAuthenticationOptions();
         }
+    }
+
+    private void createUserInfo() {
+        H1 pageTitle = new H1("Информация о пользователе");
+        add(pageTitle);
+
+        VerticalLayout userInfoLayout = new VerticalLayout();
+        H2 nameLabel = new H2("Имя: " + currentUser.getUsername());
+        H2 emailLabel = new H2("Email: " + currentUser.getEmail());
+        userInfoLayout.add(nameLabel, emailLabel);
+        add(userInfoLayout);
+
+        Button updateButton = createUpdateButton();
+        Button deleteButton = createDeleteButton();
+        Button logoutButton = createLogoutButton();
+
+        HorizontalLayout buttonsLayout = new HorizontalLayout(updateButton, deleteButton, logoutButton);
+        buttonsLayout.setSpacing(true);
+        add(buttonsLayout);
+    }
+
+    private Button createUpdateButton() {
+        Button updateButton = new Button("Обновить");
+        updateButton.addClickListener(e -> showUpdateUserDialog());
+        return updateButton;
+    }
+
+    private Button createDeleteButton() {
+        Button deleteButton = new Button("Удалить аккаунт");
+        deleteButton.getStyle().set("color", "red");
+        deleteButton.addClickListener(e -> deleteUserAccount());
+        return deleteButton;
+    }
+
+    private Button createLogoutButton() {
+        Button logoutButton = new Button("Выйти");
+        logoutButton.addClickListener(e -> logoutUser());
+        return logoutButton;
+    }
+
+    private void displayAuthenticationOptions() {
+        add(new H1("Вы не вошли в аккаунт. Авторизируйтесь или зарегистрируйтесь."));
+        Button loginButton = createLoginButton();
+        Button registerButton = createRegisterButton();
+
+        HorizontalLayout buttonsLayout = new HorizontalLayout(loginButton, registerButton);
+        buttonsLayout.setSpacing(true);
+        add(buttonsLayout);
+    }
+
+    private Button createLoginButton() {
+        Button loginButton = new Button("Авторизация");
+        loginButton.addClickListener(e -> UI.getCurrent().navigate(SignInView.class));
+        return loginButton;
+    }
+
+    private Button createRegisterButton() {
+        Button registerButton = new Button("Регистрация");
+        registerButton.addClickListener(e -> UI.getCurrent().navigate(SignUpView.class));
+        return registerButton;
     }
 
     private void showUpdateUserDialog() {
