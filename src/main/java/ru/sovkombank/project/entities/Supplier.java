@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+/**
+ * Сущность поставщика товаров
+ */
 @Data
 @Entity
 @NoArgsConstructor
@@ -15,8 +18,9 @@ public class Supplier {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
 
-    @ManyToMany(mappedBy = "suppliers")
+    @ManyToMany(mappedBy = "suppliers", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     private List<Product> products;
 }

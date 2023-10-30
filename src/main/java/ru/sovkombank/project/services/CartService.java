@@ -11,7 +11,7 @@ public interface CartService {
      * @param userId    Уникальный идентификатор пользователя
      * @param productId Уникальный идентификатор товара
      */
-    void addToCart(long userId, long productId);
+    void addToCart(Long userId, Long productId);
 
     /**
      * Изменение количества товара в корзине
@@ -20,14 +20,14 @@ public interface CartService {
      * @param productId Уникальный идентификатор товара
      * @param quantity  Количество добавляемого товара
      */
-    void updateProductQuantity(long userId, long productId, int quantity);
+    void updateProductQuantity(Long userId, Long productId, Integer quantity);
 
     /**
      * Удаление товара из корзины
      *
      * @param productId Уникальный идентификатор товара
      */
-    void deleteProduct(long userId, long productId);
+    void deleteProduct(Long userId, Long productId);
 
     /**
      * Полностью очищает корзину пользователя
@@ -40,5 +40,5 @@ public interface CartService {
      * @param userId Уникальный идентификатор пользователя
      * @return список товаров
      */
-    List<Product> getListOfProductsInCart(long userId);
+    List<Product> getListOfProductsInCart(Long userId);
 }

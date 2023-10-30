@@ -1,11 +1,13 @@
 package ru.sovkombank.project.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import ru.sovkombank.project.entities.CartProduct;
 
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public interface CartProductRepository extends JpaRepository<CartProduct, Long> {
     /**
      * Получает список товаров в корзине по id корзины

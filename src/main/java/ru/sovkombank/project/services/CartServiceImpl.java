@@ -1,5 +1,6 @@
 package ru.sovkombank.project.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class CartServiceImpl implements CartService {
     private final CartRepository cartRepository;
@@ -29,7 +31,8 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public void addToCart(long userId, long productId) {
+    @Transactional
+    public void addToCart(Long userId, Long productId) {
         Optional<Cart> userCart = cartRepository.findCartByUser_Id(userId);
 
         if (userCart.isPresent()) {
@@ -51,6 +54,7 @@ public class CartServiceImpl implements CartService {
                     newCartProduct.setCart(cart);
                     newCartProduct.setProduct(productToAdd);
                     newCartProduct.setQuantity(1);
+                    log.info("Добавляем в корзину товар с id {}", productId);
                     cartProductRepository.save(newCartProduct);
                 }
             }
@@ -58,12 +62,14 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public void updateProductQuantity(long userId, long productId, int quantity) {
+    @Transactional
+    public void updateProductQuantity(Long userId, Long productId, Integer quantity) {
         Optional<CartProduct> cartProduct = cartProductRepository.findCartProductByCart_IdAndProduct_Id(userId, productId);
 
         if (cartProduct.isPresent()) {
             CartProduct product = cartProduct.get();
             product.setQuantity(quantity);
+            log.info("Обновляем в корзине количество товара с id {}", productId);
             cartProductRepository.save(product);
         }
         else {
@@ -73,17 +79,20 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public void deleteProduct(long cartId, long cartProductId) {
+    public void deleteProduct(Long cartId, Long cartProductId) {
+        log.info("Удаляем из корзины товар с id {}", cartProductId);
         cartProductRepository.deleteCartProductByCart_IdAndProduct_Id(cartId, cartProductId);
     }
 
     @Override
+    @Transactional
     public void clearCart() {
+        log.info("Очищаем корзину");
         cartProductRepository.deleteAll();
     }
 
     @Override
-    public List<Product> getListOfProductsInCart(long userId) {
+    public List<Product> getListOfProductsInCart(Long userId) {
         Optional<Cart> cart = cartRepository.findCartByUser_Id(userId);
 
         List<Product> productsInCart = new ArrayList<>();
@@ -95,7 +104,7 @@ public class CartServiceImpl implements CartService {
             product.setQuantity(cartProduct.getQuantity());
             productsInCart.add(product);
         }
-
+        log.info("Получаем товары в корзине");
         return productsInCart;
     }
 }

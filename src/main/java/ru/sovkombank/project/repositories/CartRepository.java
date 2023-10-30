@@ -15,11 +15,4 @@ public interface CartRepository extends JpaRepository<Cart, Long> {
      * @return Возвращает найденную корзину
      */
     Optional<Cart> findCartByUser_Id(Long userId);
-
-    /**
-     * Удаляет из БД все записи о корзине пользователя
-     *
-     * @param userId Уникальный идентификатор пользователя
-     */
-    void deleteAllByUser_Id(long userId);
 }

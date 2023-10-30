@@ -1,6 +1,5 @@
 package ru.sovkombank.project.views.header;
 
-import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H4;
@@ -9,28 +8,16 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import ru.sovkombank.project.services.UserService;
 
 public class HeaderView extends HorizontalLayout {
+    private UserService userService;
 
     public HeaderView(UserService userService) {
         if (userService.isAuthenticated()) {
+            this.userService = userService;
             String userName = userService.getCurrentUser().getUsername();
-
-            H4 userInfo = new H4(new Text("User: " + userName));
-            userInfo.getStyle().set("margin-top", "10px");
-
-            Button logoutButton = new Button("Выход");
-            logoutButton.getStyle().set("color", "red");
-
-            logoutButton.addClickListener(e -> {
-                userService.logout();
-                Notification.show("Вы успешно вышли!");
-                getUI().ifPresent(ui -> ui.navigate(""));
-                UI.getCurrent().getPage().reload();
-            });
-
-            add(userInfo, logoutButton);
+            updateUsername(userName);
         } else {
-            Button loginButton = createButton("Вход", "api/signin");
-            Button registerButton = createButton("Регистрация", "api/signup");
+            Button loginButton = createButton("Вход", "api/auth/signin");
+            Button registerButton = createButton("Регистрация", "api/auth/signup");
 
             add(loginButton, registerButton);
         }
@@ -41,5 +28,20 @@ public class HeaderView extends HorizontalLayout {
         button.addClickListener(e -> getUI().ifPresent(ui -> ui.navigate(route)));
 
         return button;
+    }
+
+    public void updateUsername(String username) {
+        H4 userInfo = new H4("User: " + username);
+        userInfo.getStyle().set("margin-top", "10px");
+        Button logoutButton = new Button("Выход");
+        logoutButton.getStyle().set("color", "red");
+
+        logoutButton.addClickListener(e -> {
+            userService.logout();
+            Notification.show("Вы успешно вышли!");
+            UI.getCurrent().getPage().executeJs("location.assign('')");
+        });
+
+        add(userInfo, logoutButton);
     }
 }

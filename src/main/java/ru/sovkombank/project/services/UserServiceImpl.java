@@ -1,9 +1,11 @@
 package ru.sovkombank.project.services;
 
 import com.vaadin.flow.server.VaadinSession;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.sovkombank.project.entities.Cart;
 import ru.sovkombank.project.entities.User;
 import ru.sovkombank.project.exceptions.UserException;
@@ -14,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
@@ -31,6 +34,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void signUp(User user) {
         Optional<User> existingUser = userRepository.findUserByEmail(user.getEmail());
         Cart cart = new Cart();
@@ -40,14 +44,15 @@ public class UserServiceImpl implements UserService {
             throw new UserException("Пользователь с таким email уже существует");
         }
 
-        // Хешируем пароль перед сохранением
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-
+        log.info("Создаем пользователя");
         userRepository.save(user);
+        log.info("Создаем корзину пользователя");
         cartRepository.save(cart);
     }
 
     @Override
+    @Transactional
     public boolean signIn(String email, String password) {
         Optional<User> user = userRepository.findUserByEmail(email);
 
@@ -57,6 +62,7 @@ public class UserServiceImpl implements UserService {
                 loggedInUsers.put(email, authenticatedUser);
                 VaadinSession session = VaadinSession.getCurrent();
                 session.setAttribute("userEmail", email);
+                log.info("Входим в аккаунт пользователя с id {}", user.get().getId());
                 return true;
             }
         }
@@ -64,10 +70,10 @@ public class UserServiceImpl implements UserService {
         return false;
     }
 
-
     @Override
     public User getCurrentUser(String email) {
         Optional<User> user = userRepository.findUserByEmail(email);
+        log.info("Получаем авторизированного пользователя с email: {}", email);
         return user.orElse(null);
     }
 
@@ -84,6 +90,7 @@ public class UserServiceImpl implements UserService {
         String email = (String) session.getAttribute("userEmail");
 
         if (email != null) {
+            log.info("Получаем авторизированного пользователя");
             return userRepository.findUserByEmail(email).orElse(null);
         }
 
@@ -91,7 +98,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void updateUser(User user) {
+        log.info("Обновляем информацию о пользователе");
         userRepository.save(user);
     }
 
@@ -99,12 +108,15 @@ public class UserServiceImpl implements UserService {
     public void logout() {
         VaadinSession session = VaadinSession.getCurrent();
         String email = (String) session.getAttribute("userEmail");
+        log.info("Выходим из аккаунта");
         loggedInUsers.remove(email);
         session.setAttribute("userEmail", null);
     }
 
     @Override
+    @Transactional
     public void deleteUserById(Long userId) {
+        log.info("Удаляем пользователя с id {}", userId);
         userRepository.deleteById(userId);
     }
 }

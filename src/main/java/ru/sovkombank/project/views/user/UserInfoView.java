@@ -16,7 +16,8 @@ import com.vaadin.flow.server.VaadinSession;
 import ru.sovkombank.project.entities.User;
 import ru.sovkombank.project.services.UserService;
 import ru.sovkombank.project.views.MainLayout;
-import ru.sovkombank.project.views.product.ProductView;
+import ru.sovkombank.project.views.authorization.SignInView;
+import ru.sovkombank.project.views.registration.SignUpView;
 
 @Route(value = "user", layout = MainLayout.class)
 @PageTitle("Информация о пользователе")
@@ -55,8 +56,16 @@ public class UserInfoView extends VerticalLayout {
             buttonsLayout.setSpacing(true);
             add(buttonsLayout);
         } else {
-            H1 message = new H1("Вы не вошли в аккаунт. Авторизируйтесь или зарегистрируйтесь.");
-            add(message);
+            add(new H1("Вы не вошли в аккаунт. Авторизируйтесь или зарегистрируйтесь."));
+            Button loginButton = new Button("Авторизация");
+            loginButton.addClickListener(e -> UI.getCurrent().navigate(SignInView.class));
+
+            Button registerButton = new Button("Регистрация");
+            registerButton.addClickListener(e -> UI.getCurrent().navigate(SignUpView.class));
+
+            HorizontalLayout buttonsLayout = new HorizontalLayout(loginButton, registerButton);
+            buttonsLayout.setSpacing(true);
+            add(buttonsLayout);
         }
     }
 
@@ -97,7 +106,7 @@ public class UserInfoView extends VerticalLayout {
     private void logoutUser() {
         userService.logout();
         Notification.show("Вы успешно вышли!");
-        getUI().ifPresent(ui -> ui.navigate(ProductView.class));
         VaadinSession.getCurrent().getSession().invalidate();
+        UI.getCurrent().getPage().executeJs("location.assign('')");
     }
 }
