@@ -9,5 +9,11 @@ import java.util.List;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
+    /**
+     * Получает все товары по определенной категории
+     *
+     * @param category категория товаров
+     * @return список товаров определенной категории
+     */
     List<Product> getAllByCategory(Category category);
 }

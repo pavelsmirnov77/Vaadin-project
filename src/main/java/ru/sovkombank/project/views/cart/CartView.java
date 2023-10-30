@@ -101,7 +101,6 @@ public class CartView extends VerticalLayout {
         refreshGrid();
     }
 
-
     private void createOrderAndShowConfirmationDialog(User user) {
         List<Product> productsInCart = cartService.getListOfProductsInCart(userId);
         Dialog confirmationDialog = new Dialog();
