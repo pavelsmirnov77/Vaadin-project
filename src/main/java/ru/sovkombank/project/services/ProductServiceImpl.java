@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.sovkombank.project.entities.Category;
 import ru.sovkombank.project.entities.Product;
+import ru.sovkombank.project.exceptions.ProductException;
 import ru.sovkombank.project.repositories.ProductRepository;
 
 import java.util.List;
@@ -47,18 +48,20 @@ public class ProductServiceImpl implements ProductService {
         if (productRepository.existsById(productId)) {
             log.info("Удаляем товар с id {}", productId);
             try {
-                Product product = productRepository.findById(productId).orElse(null);
-                if (product != null) {
-                    product.getSuppliers().clear();
+                Product product = productRepository.findById(productId)
+                        .orElseThrow(() -> new ProductException("Товар с id " + productId + " не найден"));
 
-                    Category category = product.getCategory();
-                    if (category != null) {
-                        category.getProducts().remove(product);
-                    }
+                product.getSuppliers().clear();
 
-                    productRepository.delete(product);
-                    log.info("Товар успешно удален");
+                Category category = product.getCategory();
+                if (category != null) {
+                    category.getProducts().remove(product);
                 }
+
+                productRepository.delete(product);
+                log.info("Товар успешно удален");
+            } catch (ProductException e) {
+                log.error("Ошибка при удалении товара: Товар не найден");
             } catch (Exception e) {
                 log.error("Ошибка при удалении товара: {}", e.getMessage());
             }

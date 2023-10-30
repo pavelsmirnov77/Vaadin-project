@@ -2,6 +2,7 @@ package ru.sovkombank.project.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Check;
@@ -13,6 +14,7 @@ import org.hibernate.annotations.Check;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class CartProduct {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

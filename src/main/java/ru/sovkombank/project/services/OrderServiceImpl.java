@@ -46,9 +46,9 @@ public class OrderServiceImpl implements OrderService {
             Product productInList = allProducts.stream()
                     .filter(p -> p.getId().equals(product.getId()))
                     .findFirst()
-                    .orElse(null);
+                    .orElseThrow(() -> new ProductException("Товар " + product.getName() + " не найден."));
 
-            if (productInList == null || productInList.getQuantity() < product.getQuantity()) {
+            if (productInList.getQuantity() < product.getQuantity()) {
                 throw new ProductException("Товар " + product.getName() + " недостаточно в наличии.");
             }
         }
@@ -74,12 +74,10 @@ public class OrderServiceImpl implements OrderService {
             Product productInList = allProducts.stream()
                     .filter(p -> p.getId().equals(product.getId()))
                     .findFirst()
-                    .orElse(null);
+                    .orElseThrow(() -> new ProductException("Товар " + product.getName() + " не найден."));
 
-            if (productInList != null) {
-                int remainingQuantity = productInList.getQuantity() - product.getQuantity();
-                productInList.setQuantity(remainingQuantity);
-            }
+            int remainingQuantity = productInList.getQuantity() - product.getQuantity();
+            productInList.setQuantity(remainingQuantity);
         }
 
         productRepository.saveAll(allProducts);
@@ -92,7 +90,6 @@ public class OrderServiceImpl implements OrderService {
 
         return order;
     }
-
 
     @Override
     @Transactional

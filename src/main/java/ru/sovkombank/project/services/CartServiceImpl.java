@@ -50,10 +50,12 @@ public class CartServiceImpl implements CartService {
                     existingCartProduct.setQuantity(existingCartProduct.getQuantity() + 1);
                     cartProductRepository.save(existingCartProduct);
                 } else {
-                    CartProduct newCartProduct = new CartProduct();
-                    newCartProduct.setCart(cart);
-                    newCartProduct.setProduct(productToAdd);
-                    newCartProduct.setQuantity(1);
+                    CartProduct newCartProduct = CartProduct.builder()
+                            .cart(cart)
+                            .product(productToAdd)
+                            .quantity(1)
+                            .build();
+
                     log.info("Добавляем в корзину товар с id {}", productId);
                     cartProductRepository.save(newCartProduct);
                 }
