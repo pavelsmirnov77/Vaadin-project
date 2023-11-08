@@ -58,7 +58,6 @@ public class ProductServiceImpl implements ProductService {
                     category.getProducts().remove(product);
                 }
 
-                productRepository.delete(product);
                 log.info("Товар успешно удален");
             } catch (ProductException e) {
                 log.error("Ошибка при удалении товара: Товар не найден");

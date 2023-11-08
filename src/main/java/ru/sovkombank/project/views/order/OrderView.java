@@ -22,7 +22,6 @@ import java.util.List;
 public class OrderView extends VerticalLayout {
 
     public OrderView(OrderService orderService, UserService userService) {
-
         User currentUser = userService.getCurrentUser();
         if (currentUser != null) {
             List<Order> orders = orderService.getAllOrdersByUserId(currentUser.getId());

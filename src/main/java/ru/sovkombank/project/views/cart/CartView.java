@@ -67,6 +67,7 @@ public class CartView extends VerticalLayout {
 
         cartGrid.addColumn(new ComponentRenderer<>(product -> {
             Button deleteButton = new Button("Удалить");
+            deleteButton.getStyle().set("color", "red");
             deleteButton.addClickListener(e -> {
                 cartService.deleteProduct(userId, product.getId());
                 refreshGrid();

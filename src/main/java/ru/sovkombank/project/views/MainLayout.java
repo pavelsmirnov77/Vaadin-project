@@ -10,6 +10,7 @@ import com.vaadin.flow.component.sidenav.SideNavItem;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import org.vaadin.lineawesome.LineAwesomeIcon;
+import ru.sovkombank.project.entities.Role;
 import ru.sovkombank.project.services.UserService;
 import ru.sovkombank.project.views.cart.CartView;
 import ru.sovkombank.project.views.category.CategoryView;
@@ -42,17 +43,21 @@ public class MainLayout extends AppLayout {
         appName.addClassNames(LumoUtility.FontSize.LARGE, LumoUtility.Margin.NONE);
         HeaderView header = new HeaderView(userService);
 
-        Scroller scroller = new Scroller(createNavigation());
+        Scroller scroller = new Scroller(createNavigation(userService));
 
         addToDrawer(header, scroller);
     }
 
-    private SideNav createNavigation() {
+    private SideNav createNavigation(UserService userService) {
         SideNav nav = new SideNav();
         nav.addItem(new SideNavItem("Профиль", UserInfoView.class, LineAwesomeIcon.USER.create()));
         nav.addItem(new SideNavItem("Список товаров", CategoryView.class, LineAwesomeIcon.PRODUCT_HUNT.create()));
-        nav.addItem(new SideNavItem("Корзина", CartView.class, LineAwesomeIcon.CART_PLUS_SOLID.create()));
-        nav.addItem(new SideNavItem("Заказы", OrderView.class, LineAwesomeIcon.MONEY_BILL_SOLID.create()));
+
+        if (userService.getCurrentUser() == null || userService.getCurrentUser().getRole() == Role.USER) {
+            nav.addItem(new SideNavItem("Корзина", CartView.class, LineAwesomeIcon.CART_PLUS_SOLID.create()));
+            nav.addItem(new SideNavItem("Заказы", OrderView.class, LineAwesomeIcon.MONEY_BILL_SOLID.create()));
+        }
+
         nav.addItem(new SideNavItem("Поставщики", SupplierView.class, LineAwesomeIcon.USER_ALT_SOLID.create()));
 
         return nav;

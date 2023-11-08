@@ -11,11 +11,10 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import ru.sovkombank.project.entities.Category;
+import ru.sovkombank.project.entities.Role;
 import ru.sovkombank.project.services.*;
 import ru.sovkombank.project.views.MainLayout;
-import ru.sovkombank.project.views.authorization.SignInView;
 import ru.sovkombank.project.views.product.ProductView;
-import ru.sovkombank.project.views.registration.SignUpView;
 
 import java.util.List;
 
@@ -35,24 +34,15 @@ public class CategoryView extends VerticalLayout {
         this.userService = userService;
         this.supplierService = supplierService;
 
-        if (userService.getCurrentUser() != null) {
+        if (userService.getCurrentUser() != null && userService.getCurrentUser().getRole() == Role.ADMIN) {
             Button createCategoryButton = new Button("Создать категорию");
             createCategoryButton.getStyle().set("color", "green");
             createCategoryButton.addClickListener(e -> showCreateCategoryDialog());
+
             add(createCategoryButton);
         } else if (categoryService.getAllCategories().isEmpty()) {
-            H1 noCategoriesMessage = new H1("Категорий нет. Авторизуйтесь, чтобы их создать.");
+            H1 noCategoriesMessage = new H1("Категорий нет.");
             add(noCategoriesMessage);
-
-            Button loginButton = new Button("Авторизация");
-            loginButton.addClickListener(e -> UI.getCurrent().navigate(SignInView.class));
-
-            Button registerButton = new Button("Регистрация");
-            registerButton.addClickListener(e -> UI.getCurrent().navigate(SignUpView.class));
-
-            HorizontalLayout buttonsLayout = new HorizontalLayout(loginButton, registerButton);
-            buttonsLayout.setSpacing(true);
-            add(buttonsLayout);
         }
 
         refreshGrid();
@@ -94,7 +84,7 @@ public class CategoryView extends VerticalLayout {
     }
 
     private HorizontalLayout createButtonsForCategory(Category category) {
-        if (userService.getCurrentUser() != null) {
+        if (userService.getCurrentUser() != null && userService.getCurrentUser().getRole() == Role.ADMIN) {
             Button editCategoryButton = new Button("Редактировать");
             editCategoryButton.addClickListener(e -> {
                 showEditCategoryDialog(category);

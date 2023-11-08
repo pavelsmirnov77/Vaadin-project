@@ -33,6 +33,7 @@ public class HeaderView extends HorizontalLayout {
     public void updateUsername(String username) {
         H4 userInfo = new H4("User: " + username);
         userInfo.getStyle().set("margin-top", "10px");
+        userInfo.getStyle().set("margin-left", "10px");
         Button logoutButton = new Button("Выход");
         logoutButton.getStyle().set("color", "red");
 

@@ -74,6 +74,10 @@ public class CartServiceImpl implements CartService {
             log.info("Обновляем в корзине количество товара с id {}", productId);
             cartProductRepository.save(product);
         }
+        if (cartProduct.get().getQuantity() == 0) {
+            log.info("Количество товара с id {} изменилось на 0, удаляем товар", cartProduct.get().getId());
+            cartProductRepository.delete(cartProduct.get());
+        }
         else {
             throw new ProductException("Товар не найден");
         }

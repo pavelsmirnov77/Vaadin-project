@@ -16,6 +16,7 @@ import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.PermitAll;
 import ru.sovkombank.project.entities.Category;
 import ru.sovkombank.project.entities.Product;
+import ru.sovkombank.project.entities.Role;
 import ru.sovkombank.project.entities.Supplier;
 import ru.sovkombank.project.services.CartService;
 import ru.sovkombank.project.services.ProductService;
@@ -56,7 +57,7 @@ public class ProductView extends VerticalLayout {
         addProductButton.getStyle().set("color", "green");
 
         addProductButton.addClickListener(e -> showAddProductDialog());
-        if (this.userService.getCurrentUser() != null) {
+        if (this.userService.getCurrentUser() != null && userService.getCurrentUser().getRole() == Role.ADMIN) {
             add(addProductButton);
         }
     }
@@ -68,10 +69,13 @@ public class ProductView extends VerticalLayout {
         productGrid.getColumnByKey("quantity").setHeader("Количество");
         productGrid.addColumn(this::getSuppliersList).setHeader("Поставщики");
 
-        if (this.userService.getCurrentUser() != null) {
-            productGrid.addComponentColumn(this::createAddToCartButton);
+        if (this.userService.getCurrentUser() != null && userService.getCurrentUser().getRole() == Role.ADMIN) {
             productGrid.addComponentColumn(this::createDeleteButton);
             productGrid.addComponentColumn(this::createEditButton);
+        }
+
+        if (this.userService.getCurrentUser() != null && userService.getCurrentUser().getRole() == Role.USER) {
+            productGrid.addComponentColumn(this::createAddToCartButton);
         }
 
         add(productGrid);

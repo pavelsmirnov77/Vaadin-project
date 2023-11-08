@@ -3,11 +3,11 @@ package ru.sovkombank.project.views.supplier;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import ru.sovkombank.project.entities.Role;
 import ru.sovkombank.project.entities.Supplier;
 import ru.sovkombank.project.services.SupplierService;
 import ru.sovkombank.project.services.UserService;
@@ -24,12 +24,8 @@ public class SupplierView extends VerticalLayout {
         this.supplierService = supplierService;
         this.userService = userService;
 
-        if(this.userService.getCurrentUser() != null) {
+        if(this.userService.getCurrentUser() != null && userService.getCurrentUser().getRole() == Role.ADMIN) {
             configureAddSupplierForm();
-        }
-
-        if(supplierService.getAllSuppliers().isEmpty() && this.userService.getCurrentUser() == null) {
-            add(new H1("Авторизируйтесь, чтобы добавить поставщиков."));
         }
 
         configureSupplierGrid();
@@ -40,7 +36,7 @@ public class SupplierView extends VerticalLayout {
         supplierGrid.setColumns("name");
         supplierGrid.getColumnByKey("name").setHeader("Имя поставщика");
 
-        if (this.userService.getCurrentUser() != null) {
+        if (this.userService.getCurrentUser() != null && userService.getCurrentUser().getRole() == Role.ADMIN) {
             supplierGrid.addComponentColumn(this::createUpdateButton);
             supplierGrid.addComponentColumn(this::createDeleteButton);
         }
